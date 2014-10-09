@@ -1,1 +1,13 @@
-/home/http/.bin/gitit-journal
+#!/bin/bash
+##Script to replace ohlife.com functionality as a daily journal...
+todayfile=$(date -I).page
+cd /home/http/wiki/wikidata/journal
+touch ./$todayfile
+printf -- "---\ntitle: Journal for $(date -I)\ncategories:journal\n..." > ./$todayfile
+cd ../
+git add ./journal/$todayfile
+git commit -m "added $(date -I)'s journal entry"
+##Then email and push it so I remember to write it!
+echo "https://wiki.es.gy/journal/$todayfile"| mail -s "Journal entry for $(date -I)" aq@es.gy
+/a/bin/pu.sh  -t "Journal entry for $(date -I)" -u "https://wiki.es.gy/journal/$todayfile" "Journal entry for $(date 
+-I)"

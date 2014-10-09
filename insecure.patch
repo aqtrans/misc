@@ -1,1 +1,11 @@
-/home/http/app/gitit/insecure.patch
+--- a/Network/Gitit/Authentication.hs	2014-09-06 14:55:28.377907120 -0500
++++ b/Network/Gitit/Authentication.hs	2014-09-06 14:54:51.861398042 -0500
+@@ -273,7 +273,7 @@
+ sharedValidation validationType params = do
+   let isValidUsernameChar c = isAlphaNum c || c == ' '
+   let isValidUsername u = length u >= 3 && all isValidUsernameChar u
+-  let isValidPassword pw = length pw >= 6 && not (all isAlpha pw)
++  let isValidPassword pw = length pw >= 4
+   let accessCode = pAccessCode params
+   let uname = pUsername params
+   let pword = pPassword params

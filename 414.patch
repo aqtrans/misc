@@ -1,1 +1,42 @@
-/home/http/app/gitit/414.patch
+From d729732d8b6cb4802826d5e030539ba86508af63 Mon Sep 17 00:00:00 2001
+From: Shane O'Brien <shane@duairc.com>
+Date: Thu, 3 Apr 2014 15:58:59 +0100
+Subject: [PATCH] Added `loggedInUser` template variable
+
+If there is a user logged in, this is set to the username of that user, otherwise it is not set.
+
+This change changes the interface of the `filledPageTemplate` function to add a `Maybe User` parameter.
+---
+ Network/Gitit/Layout.hs | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/Network/Gitit/Layout.hs b/Network/Gitit/Layout.hs
+index 8ff1b08..2c74a32 100644
+--- a/Network/Gitit/Layout.hs
++++ b/Network/Gitit/Layout.hs
+@@ -66,13 +66,14 @@ defaultRenderPage :: T.StringTemplate String -> PageLayout -> Html -> Handler
+ defaultRenderPage templ layout htmlContents = do
+   cfg <- getConfig
+   base' <- getWikiBase
++  user <- getLoggedInUser
+   ok . setContentType "text/html; charset=utf-8" . toResponse . T.render .
+-       filledPageTemplate base' cfg layout htmlContents $ templ
++       filledPageTemplate base' user cfg layout htmlContents $ templ
+ 
+ -- | Returns a page template with gitit variables filled in.
+-filledPageTemplate :: String -> Config -> PageLayout -> Html ->
++filledPageTemplate :: String -> Maybe User -> Config -> PageLayout -> Html ->
+                       T.StringTemplate String -> T.StringTemplate String
+-filledPageTemplate base' cfg layout htmlContents templ =
++filledPageTemplate base' user cfg layout htmlContents templ =
+   let rev  = pgRevision layout
+       page = pgPageName layout
+       prefixedScript x = case x of
+@@ -109,6 +110,7 @@ filledPageTemplate base' cfg layout htmlContents templ =
+                    setBoolAttr "isdiscusspage" (isDiscussPage page) .
+                    setBoolAttr "pagetools" (pgShowPageTools layout) .
+                    setBoolAttr "sitenav" (pgShowSiteNav layout) .
++                   maybe id (T.setAttribute "loggedinuser" . uUsername) user .
+                    maybe id (T.setAttribute "markuphelp") (pgMarkupHelp layout) .
+                    setBoolAttr "printable" (pgPrintable layout) .
+                    maybe id (T.setAttribute "revision") rev .

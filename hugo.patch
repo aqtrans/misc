@@ -1,1 +1,20 @@
-/home/http/app/gitit/hugo.patch
+--- a/Network/Gitit/Page.hs	2014-10-05 05:46:19.604536684 -0500
++++ b/Network/Gitit/Page.hs	2014-10-05 05:46:59.257871404 -0500
+@@ -77,7 +77,7 @@
+   _ <- string "---"
+   _ <- pBlankline
+   ls <- many pMetadataLine
+-  _ <- string "..."
++  _ <- string "---"
+   _ <- pBlankline
+   skipMany pBlankline
+   rest <- getInput
+@@ -155,7 +155,7 @@
+                        then "categories: " ++ intercalate ", " pagecats ++ "\n"
+                        else "") ++
+                    (unlines (map (\(k, v) -> k ++ ": " ++ v) metadata))
+-  in (if null metadata' then "" else "---\n" ++ metadata' ++ "...\n\n")
++  in (if null metadata' then "" else "---\n" ++ metadata' ++ "---\n\n")
+         ++ pageText page'
+ 
+ -- | Read categories from metadata strictly.
